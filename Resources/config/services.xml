@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+   <parameters>
+        <parameter key="togu.template.class">Togu\TemplateBundle\ToguEngine</parameter>
+        
+        <parameter key="togu.compiler.class">Togu\TemplateBundle\Compiler\Compiler</parameter>
+        
+        <parameter key="togu.template.cache_warmer.class">Togu\TemplateBundle\CacheWarmer\TemplateCacheWarmer</parameter>
+        <parameter key="togu.template.loader.class">Togu\TemplateBundle\Loader\FilesystemLoader</parameter>
+        
+        <parameter key="togu.template.twig_extension.togu_contents.class">Togu\TemplateBundle\Twig\ToguContentsExtension</parameter>
+        <parameter key="togu.template.twig_extension.source_files.class">Togu\TemplateBundle\Twig\SourceFilesExtension</parameter>
+        
+        <parameter key="togu.template.syntax.php.class">Togu\TemplateBundle\Syntax\PhpSyntax</parameter>
+        <parameter key="togu.template.syntax.js.class">Togu\TemplateBundle\Syntax\JsSyntax</parameter>
+        
+        <parameter key="togu.template.twig_extension.source_files.data_dir">%kernel.root_dir%/data</parameter>
+        
+        <parameter key="togu.template.syntax.php.cache_file">%kernel.cache_dir%/togutpl.php</parameter>
+        
+        <parameter key="togu.template.syntax.js.cache_file">%kernel.root_dir%/../web/frontend/compiled/Templates.js</parameter>
+    </parameters>
+ 
+    <services>
+        <service id="togu.template.engine" class="%togu.template.class%">
+            <argument type="service" id="service_container" />
+            <argument type="service" id="togu.compiler" />
+            <argument type="service" id="togu.template.syntax.php" />
+        </service>
+        
+        <service id="togu.compiler" class="%togu.compiler.class%">
+            <argument type="service" id="templating.finder" />
+            <argument type="service" id="togu.template.loader" />
+        </service>
+
+         <service id="togu.template.cache_warmer" class="%togu.template.cache_warmer.class%" public="false">
+            <argument type="service" id="service_container" />
+            <tag name="kernel.cache_warmer" />
+        </service>
+
+         <service id="togu.template.twig_extension.togu_contents" class="%togu.template.twig_extension.togu_contents.class%" public="false">
+            <argument type="service" id="togu.template.engine" />
+            <tag name="twig.extension" />
+		</service>		
+
+         <service id="togu.template.twig_extension.source_files" class="%togu.template.twig_extension.source_files.class%" public="false">
+            <argument>%togu.template.twig_extension.source_files.data_dir%</argument>
+            <argument>%kernel.environment%</argument>
+            <tag name="twig.extension" />
+		</service>		
+
+        <service id="togu.template.loader" class="%togu.template.loader.class%">
+            <argument type="service" id="templating.locator" />
+            <argument type="service" id="templating.name_parser" />
+        </service>
+
+         <service id="togu.template.syntax.php" class="%togu.template.syntax.php.class%" public="true">
+            <argument type="service" id="service_container" />
+            <argument>%togu.template.syntax.php.cache_file%</argument>
+            <tag name="togu.template.syntax" />
+        </service>
+
+         <service id="togu.template.syntax.js" class="%togu.template.syntax.js.class%" public="true">
+            <argument>%togu.template.syntax.js.cache_file%</argument>
+            <tag name="togu.template.syntax" />
+        </service>
+
+    </services>
+</container>
