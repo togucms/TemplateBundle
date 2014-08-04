@@ -22,6 +22,7 @@
 namespace Togu\TemplateBundle\Syntax;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 class JsSyntax extends AbstractSyntax {
 	protected $cacheFile;
@@ -31,6 +32,8 @@ class JsSyntax extends AbstractSyntax {
 	 */
 	public function __construct($cacheFile) {
 		$this->cacheFile = $cacheFile;
+		$fs = new Filesystem();
+		$fs->mkdir(dirname($cacheFile));
 	}
 
 	/**
