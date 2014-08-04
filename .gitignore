@@ -4,7 +4,5 @@ composer.lock
 /vendor/
 /bin
 /Tests/app/config/parameters.yml
-.idea
-cache
-logs
-.project
+/.idea
+/.project
