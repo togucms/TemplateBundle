@@ -63,7 +63,7 @@ trait TemplateProcessor {
 	protected function renderComponent($componentConfig, $model) {
 		$template = $componentConfig['template'];
 		if(! isset($this->mapping[$template])) {
-			throw new \Exception(sprintf('Template %s is not defined', $template));
+			throw new \InvalidArgumentException(sprintf('Template or partial %s is not defined, parent template: %s', $template, $this->currentComponentConfig['template']));
 		}
 		$parentComponentConfig = $this->currentComponentConfig;
 		$this->currentComponentConfig = $componentConfig;
@@ -76,6 +76,9 @@ trait TemplateProcessor {
 	}
 
 	protected function getContainerConfig($container) {
+		if(! isset($this->currentComponentConfig['containers'][$container])) {
+			throw new \InvalidArgumentException(sprintf('Container %s has no configuration, template: %s', $container, $this->currentComponentConfig['template']));
+		}
 		return $this->currentComponentConfig['containers'][$container];
 	}
 
